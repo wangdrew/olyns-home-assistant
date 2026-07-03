@@ -1,0 +1,11 @@
+{
+  "domain": "olyns",
+  "name": "Olyns Recycling",
+  "version": "1.0.0",
+  "documentation": "",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [],
+  "iot_class": "cloud_polling",
+  "integration_type": "device"
+}

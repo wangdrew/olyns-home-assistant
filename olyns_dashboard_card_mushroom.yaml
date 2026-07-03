@@ -1,0 +1,52 @@
+type: vertical-stack
+cards:
+
+  - type: custom:mushroom-template-card
+    primary: Olyns Recycling
+    secondary: "{{ states('sensor.olyns_status') }}"
+    icon: mdi:recycle
+    icon_color: >-
+      {% if states('sensor.olyns_status') == 'Open' %} green
+      {% else %} grey
+      {% endif %}
+
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: sensor.olyns_status
+        state: "Open"
+    card:
+      type: horizontal-stack
+      cards:
+        - type: custom:mushroom-template-card
+          primary: "{{ states('sensor.olyns_aluminum') | int }}%"
+          secondary: Aluminum
+          icon: mdi:cup-outline
+          icon_color: >-
+            {% set v = states('sensor.olyns_aluminum') | int(0) %}
+            {% if v >= 100 %} red
+            {% elif v > 60 %} orange
+            {% else %} green
+            {% endif %}
+
+        - type: custom:mushroom-template-card
+          primary: "{{ states('sensor.olyns_plastic') | int }}%"
+          secondary: Plastic
+          icon: mdi:bottle-soda-classic-outline
+          icon_color: >-
+            {% set v = states('sensor.olyns_plastic') | int(0) %}
+            {% if v >= 100 %} red
+            {% elif v > 60 %} orange
+            {% else %} green
+            {% endif %}
+
+        - type: custom:mushroom-template-card
+          primary: "{{ states('sensor.olyns_glass') | int }}%"
+          secondary: Glass
+          icon: mdi:bottle-wine-outline
+          icon_color: >-
+            {% set v = states('sensor.olyns_glass') | int(0) %}
+            {% if v >= 100 %} red
+            {% elif v > 60 %} orange
+            {% else %} green
+            {% endif %}

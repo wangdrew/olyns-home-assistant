@@ -1,0 +1,84 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Olyns Recycling — Dashboard Card
+#
+# Paste the YAML below into your dashboard via the card editor
+# (three-dot menu → Edit Dashboard → Add Card → Manual).
+#
+# IMPORTANT: Adjust the entity IDs if you used a name other than "Olyns" in
+# configuration.yaml.  Home Assistant builds entity IDs from the name you set:
+#   name: "Olyns"  →  sensor.olyns_status / sensor.olyns_aluminum / etc.
+#   name: "My Bin" →  sensor.my_bin_status / sensor.my_bin_aluminum / etc.
+#
+# The card uses:
+#   • A built-in glance card  — shown when the bin is open (three %-values)
+#   • A mushroom-template-card — shown for any non-nominal status
+# Both cards inherit background/transparency from your active theme (Frosted
+# Glass), so no background colours are hardcoded here.
+# ──────────────────────────────────────────────────────────────────────────────
+
+type: vertical-stack
+cards:
+
+  # ── Nominal state: bin is open, show fill levels ───────────────────────────
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: sensor.olyns_status
+        state: "Open"          # matches the human-readable STATUS_LABELS value
+    card:
+      type: glance
+      title: Olyns Recycling
+      card_mod:
+        style:
+          ha-card$: |
+            .card-header {
+              font-size: 1rem !important;
+              font-weight: 500 !important;
+              padding: 12px 20px 4px !important;
+            }
+      show_name: true
+      show_icon: false
+      show_state: true
+      columns: 3
+      entities:
+        - entity: sensor.olyns_aluminum
+          name: Aluminum
+          icon: mdi:bottle-soda-classic-outline
+        - entity: sensor.olyns_plastic
+          name: Plastic
+          icon: mdi:bottle-soda-outline
+        - entity: sensor.olyns_glass
+          name: Glass
+          icon: mdi:bottle-wine-outline
+
+  # ── Non-nominal state: show a mushroom status card ─────────────────────────
+  # Requires the mushroom-cards custom card collection (HACS).
+  # If you do not have mushroom cards installed, see the fallback option below.
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: sensor.olyns_status
+        state_not: "Open"
+    card:
+      type: custom:mushroom-template-card
+      primary: Olyns Recycling
+      secondary: "{{ states('sensor.olyns_status') }}"
+      icon: mdi:recycle
+      icon_color: grey
+      # tap_action is intentionally omitted — no navigation needed
+
+# ──────────────────────────────────────────────────────────────────────────────
+# FALLBACK (no mushroom cards):
+# Replace the second card above with this simpler markdown card:
+#
+#  - type: conditional
+#    conditions:
+#      - condition: state
+#        entity: sensor.olyns_status
+#        state_not: "Open"
+#    card:
+#      type: markdown
+#      content: >
+#        ## Olyns Recycling
+#        {{ states('sensor.olyns_status') }}
+# ──────────────────────────────────────────────────────────────────────────────
